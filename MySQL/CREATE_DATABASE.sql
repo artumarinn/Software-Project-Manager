@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS sistemaconsultora;
 CREATE DATABASE IF NOT EXISTS sistemaconsultora;
 USE sistemaconsultora;
 
-CREATE TABLE rol (
+CREATE TABLE roles (
    id_rol INT AUTO_INCREMENT PRIMARY KEY,
    Nombre_rol VARCHAR(100)
 );
@@ -37,7 +37,7 @@ CREATE TABLE empleado (
    Salario VARCHAR(20),
    Fecha_Contratacion DATE,
    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
-   FOREIGN KEY (id_rol) REFERENCES rol(id_rol)
+   FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
 );
 
 CREATE TABLE requisito_cliente (
