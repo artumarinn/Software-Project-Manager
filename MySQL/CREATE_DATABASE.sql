@@ -25,7 +25,6 @@ CREATE TABLE cliente (
 
 CREATE TABLE empleado (
    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
-   Usuario INT,
    Nombre VARCHAR(50), 
    Apellido VARCHAR(50), 
    DNI VARCHAR(8) UNIQUE, 
@@ -34,7 +33,7 @@ CREATE TABLE empleado (
    Rol INT,
    Salario DECIMAL(10,2), 
    Fecha_Contratacion DATE,
-   Contraseña VARCHAR(50),
+   Contraseña VARCHAR(255),
    FOREIGN KEY (Rol) REFERENCES roles(id_rol)
 );
 
