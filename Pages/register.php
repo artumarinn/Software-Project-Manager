@@ -1,35 +1,27 @@
 <?php
 include_once '../Database/connection.php';
 
-$registerMessage="";
+$registerMessage = "";
 
-if($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
+    $dni = $_POST['dni'];
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
 
-    // verificar si se envian los fomularios
-    if(isset($_POST['register'])) {
-    $dni=$_POST['dni'];
-    $password=$_POST['password'];
-    $confirm_password=$_POST['confirm_password'];
-    }
-
-    if($password == $confirm_password) {
+    if ($password == $confirm_password) {
         $password_hashed = password_hash($password, PASSWORD_DEFAULT);
 
-        $sql = "INSERT INTO empleado(DNI, contraseña) VALUES ('$dni','$password_hashed')";
+        $sql = "INSERT INTO empleado(DNI, contraseña) VALUES ('" . $conn->real_escape_string($dni) . "','" . $conn->real_escape_string($password_hashed) . "')";
 
-        if($conn->query($sql) === TRUE) {
+        if ($conn->query($sql) === TRUE) {
             $registerMessage = "Registro exitoso";
-
-        }else{
-            $registerMessage = "Error" . $conn->error;
+        } else {
+            $registerMessage = "Error: " . $conn->error;
         }
-            
-    }else {
+    } else {
         $registerMessage = "Las contraseñas no coinciden";
     }
-
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -44,13 +36,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div>
         <?php if ($registerMessage) { echo "<p>$registerMessage</p>"; } ?>
         <form method="POST">
-            <label for="dni">Dni:</label><br>
+            <label for="dni">DNI:</label><br>
             <input type="text" id="dni" name="dni" required><br><br>
             <label for="password">Password:</label><br>
             <input type="password" id="password" name="password" required><br><br>
-            <label for="confirm_password">Confirm password:</label><br>
+            <label for="confirm_password">Confirm Password:</label><br>
             <input type="password" id="confirm_password" name="confirm_password" required><br><br>
-            <button type="submit" name="register">Regsiter</button>
+            <button type="submit" name="register">Register</button>
+            <a href="http://localhost/UCH/BASE_DE_DATOS/CONSULTORA_SOFTWARE/Pages/Login.php">Login</a>
         </form>
     </div>
 </body>
