@@ -1,9 +1,9 @@
 <?php
-include_once '../Database/connection.php';
+include_once '../../Database/connection.php';
 
 $registerMessage = "";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createAccount'])) {
     $dni = $_POST['dni'];
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
@@ -11,12 +11,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     if ($password == $confirm_password) {
         $password_hashed = password_hash($password, PASSWORD_DEFAULT);
 
-        $sql = "INSERT INTO empleado(DNI, contraseña) VALUES ('" . $conn->real_escape_string($dni) . "','" . $conn->real_escape_string($password_hashed) . "')";
-
-        if ($conn->query($sql) === TRUE) {
-            $registerMessage = "Registro exitoso";
-        } else {
-            $registerMessage = "Error: " . $conn->error;
+        try {
+            $sql = "INSERT INTO empleado(DNI, contraseña) VALUES ('" . $conn->real_escape_string($dni) . "','" . $conn->real_escape_string($password_hashed) . "')";
+            if ($conn->query($sql) === TRUE) {
+                $registerMessage = "Registro exitoso";
+            } else {
+                throw new Exception($conn->error, $conn->errno);
+            }
+        } catch (Exception $e) {
+            if ($e->getCode() == 1062) {
+                $registerMessage = "El usuario con DNI $dni ya está registrado.";
+            } else {
+                $registerMessage = "Error: " . $e->getMessage();
+            }
         }
     } else {
         $registerMessage = "Las contraseñas no coinciden";
@@ -37,13 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
         <?php if ($registerMessage) { echo "<p>$registerMessage</p>"; } ?>
         <form method="POST">
             <label for="dni">DNI:</label><br>
-            <input type="text" id="dni" name="dni" required><br><br>
+            <input type="number" id="dni" name="dni" required><br><br>
             <label for="password">Password:</label><br>
             <input type="password" id="password" name="password" required><br><br>
             <label for="confirm_password">Confirm Password:</label><br>
             <input type="password" id="confirm_password" name="confirm_password" required><br><br>
-            <button type="submit" name="register">Register</button>
-            <a href="http://localhost/UCH/BASE_DE_DATOS/CONSULTORA_SOFTWARE/Pages/Login.php">Login</a>
+            <button type="submit" name="createAccount">Create Account</button>
+            <a href="http://localhost/UCH/BASE_DE_DATOS/CONSULTORA_SOFTWARE/Pages/Auth/Login.php">Login</a>
         </form>
     </div>
 </body>

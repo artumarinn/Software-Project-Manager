@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include_once '../Database/connection.php';
+include_once '../../Database/connection.php';
 
 $loginMessage = "";
 
@@ -14,9 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        if ($password == $row['contraseña']) {
+        if (password_verify($password, $row['contraseña'])) {
             $_SESSION['dni'] = $dni; // guardar el DNI en la sesión
-            header("Location: ControlPanel.php"); // redirigir a una pagina de bienvenida
+            header("Location: ../ControlPanel.php"); // redirigir a una pagina de bienvenida
             exit();
         } else {
             $loginMessage = "Contraseña incorrecta.";
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
         <?php if ($loginMessage) { echo "<p>$loginMessage</p>"; } ?>
         <form method="POST">
             <label for="dni">DNI:</label><br>
-            <input type="text" id="dni" name="dni" required><br><br>
+            <input type="number" id="dni" name="dni" required><br><br>
             <label for="password">Password:</label><br>
             <input type="password" id="password" name="password" required><br><br>
             <button type="submit" name="login">Login</button>
