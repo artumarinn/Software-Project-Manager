@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createAccount'])) {
             }
         } catch (Exception $e) {
             if ($e->getCode() == 1062) {
-                $registerMessage = "User with SSN $dni is already registered.";
+                $registerMessage = "User with DNI $dni is already registered.";
             } else {
                 $registerMessage = "Error: " . $e->getMessage();
             }

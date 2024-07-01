@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         if (password_verify($password, $row['password'])) {
-            $_SESSION['ssn'] = $dni; 
+            $_SESSION['dni'] = $dni; 
             header("Location: ../ControlPanel.php"); 
             exit();
         } else {
