@@ -6,23 +6,23 @@ include_once '../../Database/connection.php';
 $loginMessage = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
-    $dni = $_POST['dni'];
+    $ssn = $_POST['dni'];
     $password = $_POST['password'];
 
-    $sql = "SELECT contraseña FROM empleado WHERE DNI = '$dni'";
+    $sql = "SELECT password FROM employee WHERE dni = '$dni'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        if (password_verify($password, $row['contraseña'])) {
-            $_SESSION['dni'] = $dni; // guardar el DNI en la sesión
-            header("Location: ../ControlPanel.php"); // redirigir a una pagina de bienvenida
+        if (password_verify($password, $row['password'])) {
+            $_SESSION['ssn'] = $dni; 
+            header("Location: ../ControlPanel.php"); 
             exit();
         } else {
-            $loginMessage = "Contraseña incorrecta.";
+            $loginMessage = "Incorrect password.";
         }
     } else {
-        $loginMessage = "DNI no encontrado.";
+        $loginMessage = "DNI not found.";
     }
 
     $conn->close();

@@ -9,7 +9,7 @@
     <h1>Control Panel</h1>
     <div>
         <div>
-            <a href="http://localhost/UCH/BASE_DE_DATOS/CONSULTORA_SOFTWARE/Pages/Projects.php">Projects</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Projects.php">Projects</a>
         </div>
     </div>
     <div>

@@ -1,9 +1,9 @@
 <?php
-$conn = new mysqli('localhost', 'root', 'marin', 'sistemaconsultora');
+$conn = new mysqli('localhost', 'root', 'marin', 'software_project_manager');
 
 // Verificar conexión bd
 if ($conn->connect_error) {
-    die('Conexión fallida: ' . $conn->connect_error);
+    die('Failed connection: ' . $conn->connect_error);
 }
 ?>
 

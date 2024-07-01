@@ -12,21 +12,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createAccount'])) {
         $password_hashed = password_hash($password, PASSWORD_DEFAULT);
 
         try {
-            $sql = "INSERT INTO empleado(DNI, contraseña) VALUES ('" . $conn->real_escape_string($dni) . "','" . $conn->real_escape_string($password_hashed) . "')";
+            $sql = "INSERT INTO employee(dni, password) VALUES ('" . $conn->real_escape_string($dni) . "','" . $conn->real_escape_string($password_hashed) . "')";
             if ($conn->query($sql) === TRUE) {
-                $registerMessage = "Registro exitoso";
+                $registerMessage = "Registration successful.";
             } else {
                 throw new Exception($conn->error, $conn->errno);
             }
         } catch (Exception $e) {
             if ($e->getCode() == 1062) {
-                $registerMessage = "El usuario con DNI $dni ya está registrado.";
+                $registerMessage = "User with SSN $dni is already registered.";
             } else {
                 $registerMessage = "Error: " . $e->getMessage();
             }
         }
     } else {
-        $registerMessage = "Las contraseñas no coinciden";
+        $registerMessage = "Passwords do not match.";
     }
 }
 ?>
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createAccount'])) {
             <label for="confirm_password">Confirm Password:</label><br>
             <input type="password" id="confirm_password" name="confirm_password" required><br><br>
             <button type="submit" name="createAccount">Create Account</button>
-            <a href="http://localhost/UCH/BASE_DE_DATOS/CONSULTORA_SOFTWARE/Pages/Auth/Login.php">Login</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Auth/Login.php">Login</a>
         </form>
     </div>
 </body>
