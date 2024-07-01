@@ -2,6 +2,8 @@
 
 include_once '../Database/connection.php';
 
+$result = null;
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])){
     $id_proyecto = $_POST['id_proyecto'];
@@ -33,9 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])){
             
     $sql = "SELECT * FROM proyecto";
     $result = $conn->query($sql);
+
 }
-
-
 
 ?>
 
@@ -87,5 +88,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])){
 </html>
 
 <?php
-$onn->close();
+$conn->close();
 ?>
