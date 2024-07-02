@@ -15,7 +15,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST['addProject'])){
 
     try {
 
-        $sql='INSERT INTO project(name) VALUES (' . $conn->real_escape_string($name) . ')';
+        $sql= "INSERT INTO project (name, description, start_date, end_date, actual_end_date, customer_id)
+                VALUES ('$name', '$description', '$start_date', '$end_date', '$actual_end_date', '$customer_id')";
 
         if ($conn->query($sql) === TRUE) {
             $projectMessage = "Project added correctly.";
@@ -42,7 +43,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST['addProject'])){
     <form>
         <label>Name:</label><br>
         <input type="text" id="name" name="name" required><br><br>
-        <!--<label>Description:</label><br>
+        <label>Description:</label><br>
         <input type="text" id="description" name="description" required><br><br>
         <label>Start Date:</label><br>
         <input type="date" id="start_date" name="start_date" required><br><br>
@@ -51,7 +52,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST['addProject'])){
         <label>Actual end date:</label><br>
         <input type="date" id="actual_end_date" name="actual_end_date" required><br><br>
         <label>Customer ID:</label><br>
-        <input type="number" id="customer_id" name="customer_id" required><br><br>-->
+        <input type="number" id="customer_id" name="customer_id" required><br><br>
         <button type="submit" name="addProject">Add project</button>
     </form><br><br>
     <h2>Active projects</h2>
