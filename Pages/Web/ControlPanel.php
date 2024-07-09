@@ -8,17 +8,17 @@
     <h1>Control Panel</h1>
     <div>
         <div>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Projects.php">Projects</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Projects.php">Projects</a>
         </div>
     </div><br>
     <div>
         <div>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Requirements.php">Requirements</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Requirements.php">Requirements</a>
         </div>
     </div><br>
     <div>
         <div>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Employee.php">Employee</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Employee.php">Employee</a>
         </div>
     </div><br>
     <div>

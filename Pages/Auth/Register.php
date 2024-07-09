@@ -8,26 +8,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createAccount'])) {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
 
-    if ($password == $confirm_password) {
-        $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+    $sql ="SELECT dni FROM software_project_manager.employee WHERE dni = ('$dni')";  
+    $result=mysqli_query($conn, $sql);
 
-        try {
-            $sql = "INSERT INTO employee(dni, password) VALUES ('" . $conn->real_escape_string($dni) . "','" . $conn->real_escape_string($password_hashed) . "')";
-            if ($conn->query($sql) === TRUE) {
-                $registerMessage = "Registration successful.";
-            } else {
-                throw new Exception($conn->error, $conn->errno);
+    if ($result->num_rows > 0) {
+
+        if ($password == $confirm_password) {
+            $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+    
+            try {
+                $sql = "INSERT INTO employee(password) VALUES ('". $conn->real_escape_string($password_hashed) . "')";
+                if ($conn->query($sql) === TRUE) {
+                    $registerMessage = "Registration successful.";
+                } else {
+                    throw new Exception($conn->error, $conn->errno);
+                }
+            } catch (Exception $e) {
+                if ($e->getCode() == 1062) {
+                    $registerMessage = "User with DNI $dni is already registered.";
+                } else {
+                    $registerMessage = "Error: " . $e->getMessage();
+                }
             }
-        } catch (Exception $e) {
-            if ($e->getCode() == 1062) {
-                $registerMessage = "User with DNI $dni is already registered.";
-            } else {
-                $registerMessage = "Error: " . $e->getMessage();
-            }
+        } else {
+            $registerMessage = "Passwords do not match.";
         }
+
     } else {
-        $registerMessage = "Passwords do not match.";
+
+        $registerMessage = "ERROR. The DNI is not found in the database";
+        
     }
+
+    
 }
 ?>
 

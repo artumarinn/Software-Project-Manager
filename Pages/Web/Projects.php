@@ -1,6 +1,6 @@
 <?php
 
-include_once '../Database/connection.php';
+include_once '../../Database/connection.php';
 
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_POST['addProject'])){
 
