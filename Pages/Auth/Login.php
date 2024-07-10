@@ -6,7 +6,8 @@ include_once '../../Database/connection.php';
 $loginMessage = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
-    $ssn = $_POST['dni'];
+
+    $dni = $_POST['dni'];
     $password = $_POST['password'];
 
     $sql = "SELECT password FROM employee WHERE dni = '$dni'";
@@ -16,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
         $row = $result->fetch_assoc();
         if (password_verify($password, $row['password'])) {
             $_SESSION['dni'] = $dni; 
-            header("Location: ../ControlPanel.php"); 
+            header("Location: ../Web/ControlPanel.php"); 
             exit();
         } else {
             $loginMessage = "Incorrect password.";

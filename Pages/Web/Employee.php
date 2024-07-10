@@ -18,8 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "INSERT INTO employee (first_name, last_name, dni, email, phone, role_id, salary, hire_date) 
     VALUES ('$firstName', '$lastName', '$dni', '$email', '$phone', '$role', '$salary', '$hireDate')";
 
-    // TERMINAR ESTO: NO SE AGREGAN LOS DATOS A LA BD
-
     // ejecutar consulta
     if ($conn->query($sql) === TRUE) {
         echo 'Successfully added';
@@ -52,7 +50,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <label>Phone:</label><br>
         <input type="text" name="phone" required><br><br>
         <label>Role:</label><br>
-        <input type="text" name="role" required><br><br>
+        <select id="role" name="role" required>
+            <?php
+            include_once '../../Database/connection.php';
+            
+            $sql= "SELECT role_id, description FROM roles";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+            
+                while ($row = $result->fetch_assoc()) {
+                    echo "<option value=\"{$row['role_id']}\">{$row['description']}</option>";
+                }
+            } else {
+                echo "<option value=\"\">No se encontraron roles</option>";
+            }
+
+            $conn->close();
+              
+            ?>
+        </select><br><br>
         <label>Salary:</label><br>
         <input type="text" name="salary" required><br><br>
         <label>Hire Date:</label><br>

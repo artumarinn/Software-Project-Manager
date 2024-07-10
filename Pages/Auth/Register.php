@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createAccount'])) {
             $password_hashed = password_hash($password, PASSWORD_DEFAULT);
     
             try {
-                $sql = "INSERT INTO employee(password) VALUES ('". $conn->real_escape_string($password_hashed) . "')";
+                $sql = "UPDATE employee SET password = '$password_hashed' WHERE dni = '$dni'";
                 if ($conn->query($sql) === TRUE) {
                     $registerMessage = "Registration successful.";
                 } else {
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createAccount'])) {
             <label for="confirm_password">Confirm Password:</label><br>
             <input type="password" id="confirm_password" name="confirm_password" required><br><br>
             <button type="submit" name="createAccount">Create Account</button>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Auth/Login.php">Login</a>
+            <a href="http://localhost/UCH/BASE_DE_DATOS/Software-Project-Manager/Pages/Auth/Login.php">Login</a>
         </form>
     </div>
 </body>
