@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <label>Role:</label><br>
         <select id="role" name="role" required>
             <?php
+            
             include_once '../../Database/connection.php';
             
             $sql= "SELECT role_id, description FROM roles";

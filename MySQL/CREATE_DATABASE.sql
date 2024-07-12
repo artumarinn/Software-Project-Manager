@@ -33,7 +33,7 @@ CREATE TABLE employee (
    role_id INT,
    salary DECIMAL(10,2),
    hire_date DATE,
-   password VARCHAR(255),
+   password VARCHAR(255) ,
    FOREIGN KEY (role_id) REFERENCES roles(role_id)
 );
 
