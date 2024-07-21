@@ -105,12 +105,25 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Styles/style.css">
     <title>Gestión de Empleados</title>
 </head>
 <body>
+    <header>
+        <div>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/ControlPanel.php" class="web-title">Software Project Manager</a>
+        </div>
+        <nav>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Projects.php">Projects</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Requirements.php">Requirements</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Employee.php">Employee</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Customers.php">Customers</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Payment.php">Payment</a>
+        </nav>
+    </header>
     <h1>Gestión de Empleados</h1>
 
-    <!-- Formulario para agregar empleados -->
+    <!-- formulario para agregar empleados -->
     <h2>Agregar Empleado</h2>
     <form action="" method="POST">
         <label for="first_name">Nombre:</label>
@@ -144,10 +157,13 @@ $conn->close();
         <button type="submit" name="add_employee">Agregar Empleado</button>
     </form>
 
-    <!-- Formulario para editar empleados -->
+    <!-- formulario para editar empleados -->
     <h2>Editar Empleado</h2>
     <form action="" method="POST">
         <input type="hidden" id="employee_id" name="employee_id">
+        <label for="edit_id">ID:</label>
+        <input type="text" id="edit_id" name="employee_id" required><br><br>
+
         <label for="edit_first_name">Nombre:</label>
         <input type="text" id="edit_first_name" name="first_name" required><br><br>
 
@@ -179,7 +195,7 @@ $conn->close();
         <button type="submit" name="edit_employee">Actualizar Empleado</button>
     </form>
 
-    <!-- Formulario para eliminar empleados -->
+    <!-- formulario para eliminar empleados -->
     <h2>Eliminar Empleado</h2>
     <form action="" method="POST">
         <label for="delete_employee_id">ID del Empleado:</label>
@@ -187,7 +203,6 @@ $conn->close();
         <button type="submit" name="delete_employee">Eliminar Empleado</button>
     </form>
 
-    <!-- Lista de empleados -->
     <h2>Lista de Empleados</h2>
     <table border="1">
         <thead>
@@ -221,7 +236,6 @@ $conn->close();
     </table>
 
     <script>
-        // Llenar formulario de edición con datos del empleado seleccionado
         function editEmployee(employee_id, first_name, last_name, dni, email, phone, role, salary, hire_date) {
             document.getElementById('employee_id').value = employee_id;
             document.getElementById('edit_first_name').value = first_name;

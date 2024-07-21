@@ -49,9 +49,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createAccount'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Styles/styleAuth.css">
     <title>Register</title>
 </head>
 <body>
+    <header>
+        <h1>Software Project Manager</h1>
+        <nav>
+        <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Auth/Login.php">Login</a>
+        </nav>
+    </header>
     <h1>Register</h1>
     <div>
         <?php if ($registerMessage) { echo "<p>$registerMessage</p>"; } ?>
@@ -63,7 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createAccount'])) {
             <label for="confirm_password">Confirm Password:</label><br>
             <input type="password" id="confirm_password" name="confirm_password" required><br><br>
             <button type="submit" name="createAccount">Create Account</button>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Auth/Login.php">Login</a>
         </form>
     </div>
 </body>

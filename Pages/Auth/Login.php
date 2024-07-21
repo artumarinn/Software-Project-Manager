@@ -35,9 +35,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../Styles/styleAuth.css">
     <title>Login</title>
 </head>
 <body>
+<header>
+        <h1>Software Project Manager</h1>
+        <nav>
+        <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Auth/Register.php">Register</a>
+        </nav>
+    </header>
     <div>
         <h1>Login</h1>
         <?php if ($loginMessage) { echo "<p>$loginMessage</p>"; } ?>
