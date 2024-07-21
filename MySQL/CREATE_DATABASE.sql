@@ -4,23 +4,16 @@ USE software_project_manager;
 
 CREATE TABLE roles (
    role_id INT AUTO_INCREMENT PRIMARY KEY,
-   description VARCHAR(50)
-);
-
-CREATE TABLE customer_type (
-   customer_type_id INT AUTO_INCREMENT PRIMARY KEY,
-   description VARCHAR(100)
+   role VARCHAR(50)
 );
 
 CREATE TABLE customer (
    customer_id INT AUTO_INCREMENT PRIMARY KEY,
-   customer_type_id INT,
-   name VARCHAR(50),
-   Cuil VARCHAR(11),
+   full_name VARCHAR(50),
+   cuil VARCHAR(11),
    address VARCHAR(150),
    email VARCHAR(50),
-   phone VARCHAR(15),
-   FOREIGN KEY (customer_type_id) REFERENCES customer_type(customer_type_id)
+   phone VARCHAR(15)
 );
 
 CREATE TABLE employee (

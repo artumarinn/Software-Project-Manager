@@ -2,192 +2,237 @@
 
 include_once '../../Database/connection.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+// agregar empleado
+if (isset($_POST['add_employee'])) {
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $dni = $_POST['dni'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $role_id = $_POST['role'];
+    $salary = $_POST['salary'];
+    $hire_date = $_POST['hire_date'];
 
-    // eliminación de empleados
-    if (isset($_POST['delete_employee_id'])) {
-        $employeeId = $_POST['delete_employee_id'];
+    $sql = "INSERT INTO employee (first_name, last_name, dni, email, phone, role_id, salary, hire_date, )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, )";
 
-        $sql = "DELETE FROM employee WHERE employee_id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $employeeId);
-
-        if ($stmt->execute() === TRUE) {
-            echo 'Empleado eliminado exitosamente';
-            header("Refresh: 2; URL=Employee.php");
-            exit();
-        } else {
-            echo 'Error al eliminar el empleado: ' . $conn->error;
-        }
-
-        $stmt->close();
-    }
-
-    // edición de empleados
-    elseif (isset($_POST['edit_employee_id'])) {
-        $employeeId = $_POST['edit_employee_id'];
-        $firstName = $_POST['first_name'];
-        $lastName = $_POST['last_name'];
-        $dni = $_POST['dni'];
-        $email = $_POST['email'];
-        $phone = $_POST['phone'];
-        $role = $_POST['role'];
-        $salary = $_POST['salary'];
-        $hireDate = $_POST['hireDate'];
-
-        $sql = "UPDATE employee SET first_name = ?, last_name = ?, dni = ?, email = ?, phone = ?, role_id = ?, salary = ?, hire_date = ? WHERE employee_id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssssi", $firstName, $lastName, $dni, $email, $phone, $role, $salary, $hireDate, $employeeId);
-
-        if ($stmt->execute() === TRUE) {
-            echo 'Empleado actualizado exitosamente';
-            header("Refresh: 2; URL=Employee.php");
-            exit();
-        } else {
-            echo 'Error al actualizar el empleado: ' . $conn->error;
-        }
-
-        $stmt->close();
-        
-    } else {
-        // adición de empleados
-        $firstName = $_POST['first_name'];
-        $lastName = $_POST['last_name'];
-        $dni = $_POST['dni'];
-        $email = $_POST['email'];
-        $phone = $_POST['phone'];
-        $role = $_POST['role'];
-        $salary = $_POST['salary'];
-        $hireDate = $_POST['hireDate'];
-
-        $sql = "INSERT INTO employee (first_name, last_name, dni, email, phone, role_id, salary, hire_date) 
-                VALUES ('$firstName', '$lastName', '$dni', '$email', '$phone', '$role', '$salary', '$hireDate')";
-
-        if ($conn->query($sql) === TRUE) {
-            echo 'Empleado agregado exitosamente';
-            header("Refresh: 2; URL=Employee.php");
-            exit();
-        } else {
-            if ($conn->errno == 1062) {
-                echo 'Error: Ya existe un empleado con el mismo DNI o correo electrónico.';
-            } else {
-                echo 'Error: ' . $conn->error;
-            }
-        }
-    }
-}
-
-// consulta para obtener roles
-$sqlRoles = "SELECT role_id, description FROM roles";
-$resultRoles = $conn->query($sqlRoles);
-
-// consulta para obtener empleados con el rol
-$sqlEmployees = "
-    SELECT employee.employee_id, employee.first_name, employee.last_name, employee.dni, employee.email, employee.phone, roles.description AS role, employee.salary, employee.hire_date 
-    FROM employee  
-    JOIN roles ON employee.role_id = roles.role_id
-";
-$resultEmployees = $conn->query($sqlEmployees);
-
-// Obtener datos del empleado a editar
-$employeeToEdit = null;
-if (isset($_GET['edit_employee_id'])) {
-    $employeeId = $_GET['edit_employee_id'];
-    $sql = "SELECT * FROM employee WHERE employee_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $employeeId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $employeeToEdit = $result->fetch_assoc();
+    $stmt->bind_param("sssssiis", $first_name, $last_name, $dni, $email, $phone, $role_id, $salary, $hire_date);
+
+    if ($stmt->execute()) {
+        echo "Empleado agregado exitosamente";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
     $stmt->close();
 }
+
+// editar empleado
+if (isset($_POST['edit_employee'])) {
+    $employee_id = $_POST['employee_id'];
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $dni = $_POST['dni'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $role_id = $_POST['role'];
+    $salary = $_POST['salary'];
+    $hire_date = $_POST['hire_date'];
+
+    $sql = "UPDATE employee SET first_name=?, last_name=?, dni=?, email=?, phone=?, role_id=?, salary=?, hire_date=?
+            WHERE employee_id=?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssssiisi", $first_name, $last_name, $dni, $email, $phone, $role_id, $salary, $hire_date, $employee_id);
+
+    if ($stmt->execute()) {
+        echo "Empleado actualizado exitosamente";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+
+// eliminar empleado
+if (isset($_POST['delete_employee'])) {
+    $employee_id = $_POST['employee_id'];
+
+    $sql = "DELETE FROM employee WHERE employee_id=?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $employee_id);
+
+    if ($stmt->execute()) {
+        echo "Empleado eliminado exitosamente";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+
+// Obtener roles
+$roles = [];
+$sql = "SELECT role_id, role FROM roles";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $roles[] = $row;
+    }
+}
+
+// Obtener empleados
+$employees = [];
+$sql = "SELECT employee.employee_id, employee.first_name, employee.last_name, employee.dni, employee.email, employee.phone, roles.role, employee.salary, employee.hire_date
+        FROM employee
+        JOIN roles ON employee.role_id = roles.role_id";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $employees[] = $row;
+    }
+}
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee</title>
+    <title>Gestión de Empleados</title>
 </head>
 <body>
-    <h1>Manage Employees</h1>
-    <form method="POST" action="">
-        <h2><?php echo $employeeToEdit ? 'Edit Employee' : 'Add Employee'; ?></h2>
-        <input type="hidden" name="edit_employee_id" value="<?php echo $employeeToEdit['employee_id'] ?? ''; ?>">
-        <label>First Name:</label><br>
-        <input type="text" name="first_name" value="<?php echo $employeeToEdit['first_name'] ?? ''; ?>" required><br><br>
-        <label>Last Name:</label><br>
-        <input type="text" name="last_name" value="<?php echo $employeeToEdit['last_name'] ?? ''; ?>" required><br><br>
-        <label>DNI:</label><br>
-        <input type="text" name="dni" value="<?php echo $employeeToEdit['dni'] ?? ''; ?>" required><br><br>
-        <label>Email:</label><br>
-        <input type="text" name="email" value="<?php echo $employeeToEdit['email'] ?? ''; ?>" required><br><br>
-        <label>Phone:</label><br>
-        <input type="text" name="phone" value="<?php echo $employeeToEdit['phone'] ?? ''; ?>" required><br><br>
-        <label>Role:</label><br>
+    <h1>Gestión de Empleados</h1>
+
+    <!-- Formulario para agregar empleados -->
+    <h2>Agregar Empleado</h2>
+    <form action="" method="POST">
+        <label for="first_name">Nombre:</label>
+        <input type="text" id="first_name" name="first_name" required><br><br>
+
+        <label for="last_name">Apellido:</label>
+        <input type="text" id="last_name" name="last_name" required><br><br>
+
+        <label for="dni">DNI:</label>
+        <input type="text" id="dni" name="dni" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="phone">Teléfono:</label>
+        <input type="text" id="phone" name="phone" required><br><br>
+
+        <label for="role">Rol:</label>
         <select id="role" name="role" required>
-            <?php
-            if ($resultRoles->num_rows > 0) {
-                while ($row = $resultRoles->fetch_assoc()) {
-                    $selected = $employeeToEdit && $employeeToEdit['role_id'] == $row['role_id'] ? 'selected' : '';
-                    echo "<option value=\"{$row['role_id']}\" $selected>{$row['description']}</option>";
-                }
-            } else {
-                echo "<option value=\"\">No se encontraron roles</option>";
-            }
-            ?>
+            <?php foreach ($roles as $role) { ?>
+                <option value="<?php echo $role['role_id']; ?>"><?php echo $role['role']; ?></option>
+            <?php } ?>
         </select><br><br>
-        <label>Salary:</label><br>
-        <input type="text" name="salary" value="<?php echo $employeeToEdit['salary'] ?? ''; ?>" required><br><br>
-        <label>Hire Date:</label><br>
-        <input type="date" name="hireDate" value="<?php echo $employeeToEdit['hire_date'] ?? ''; ?>" required><br><br>
-        <button type="submit"><?php echo $employeeToEdit ? 'Update Employee' : 'Add Employee'; ?></button><br><br>
+
+        <label for="salary">Salario:</label>
+        <input type="number" id="salary" name="salary" step="0.01" required><br><br>
+
+        <label for="hire_date">Fecha de Contratación:</label>
+        <input type="date" id="hire_date" name="hire_date" required><br><br>
+
+        <button type="submit" name="add_employee">Agregar Empleado</button>
     </form>
 
-    <h2>Existing Employees</h2>
+    <!-- Formulario para editar empleados -->
+    <h2>Editar Empleado</h2>
+    <form action="" method="POST">
+        <input type="hidden" id="employee_id" name="employee_id">
+        <label for="edit_first_name">Nombre:</label>
+        <input type="text" id="edit_first_name" name="first_name" required><br><br>
+
+        <label for="edit_last_name">Apellido:</label>
+        <input type="text" id="edit_last_name" name="last_name" required><br><br>
+
+        <label for="edit_dni">DNI:</label>
+        <input type="text" id="edit_dni" name="dni" required><br><br>
+
+        <label for="edit_email">Email:</label>
+        <input type="email" id="edit_email" name="email" required><br><br>
+
+        <label for="edit_phone">Teléfono:</label>
+        <input type="text" id="edit_phone" name="phone" required><br><br>
+
+        <label for="edit_role">Rol:</label>
+        <select id="edit_role" name="role" required>
+            <?php foreach ($roles as $role) { ?>
+                <option value="<?php echo $role['role_id']; ?>"><?php echo $role['role']; ?></option>
+            <?php } ?>
+        </select><br><br>
+
+        <label for="edit_salary">Salario:</label>
+        <input type="number" id="edit_salary" name="salary" step="0.01" required><br><br>
+
+        <label for="edit_hire_date">Fecha de Contratación:</label>
+        <input type="date" id="edit_hire_date" name="hire_date" required><br><br>
+
+        <button type="submit" name="edit_employee">Actualizar Empleado</button>
+    </form>
+
+    <!-- Formulario para eliminar empleados -->
+    <h2>Eliminar Empleado</h2>
+    <form action="" method="POST">
+        <label for="delete_employee_id">ID del Empleado:</label>
+        <input type="text" id="delete_employee_id" name="employee_id" required><br><br>
+        <button type="submit" name="delete_employee">Eliminar Empleado</button>
+    </form>
+
+    <!-- Lista de empleados -->
+    <h2>Lista de Empleados</h2>
     <table border="1">
-        <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>DNI</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Role</th>
-            <th>Salary</th>
-            <th>Hire Date</th>
-            <th>Action</th>
-        </tr>
-        <?php
-        if ($resultEmployees->num_rows > 0) {
-            while($row = $resultEmployees->fetch_assoc()) {
-                echo "<tr>";
-                echo "<td>" . $row["first_name"] . "</td>";
-                echo "<td>" . $row["last_name"] . "</td>";
-                echo "<td>" . $row["dni"] . "</td>";
-                echo "<td>" . $row["email"] . "</td>";
-                echo "<td>" . $row["phone"] . "</td>";
-                echo "<td>" . $row["role_description"] . "</td>"; 
-                echo "<td>" . $row["salary"] . "</td>";
-                echo "<td>" . $row["hire_date"] . "</td>";
-                echo "<td>
-                        <form method='POST' action='' style='display:inline;'>
-                            <input type='hidden' name='delete_employee_id' value='{$row['employee_id']}'>
-                            <button type='submit'>Eliminar</button>
-                        </form>
-                        <form method='GET' action='' style='display:inline;'>
-                            <input type='hidden' name='edit_employee_id' value='{$row['employee_id']}'>
-                            <button type='submit'>Editar</button>
-                        </form>
-                      </td>";
-                echo "</tr>";
-            }
-        } else {
-            echo "<tr><td colspan='9'>0 resultados</td></tr>";
-        }
-        ?>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>DNI</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Rol</th>
+                <th>Salario</th>
+                <th>Fecha de Contratación</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($employees as $employee) { ?>
+                <tr>
+                    <td><?php echo $employee['employee_id']; ?></td>
+                    <td><?php echo $employee['first_name']; ?></td>
+                    <td><?php echo $employee['last_name']; ?></td>
+                    <td><?php echo $employee['dni']; ?></td>
+                    <td><?php echo $employee['email']; ?></td>
+                    <td><?php echo $employee['phone']; ?></td>
+                    <td><?php echo $employee['role']; ?></td>
+                    <td><?php echo $employee['salary']; ?></td>
+                    <td><?php echo $employee['hire_date']; ?></td>
+                </tr>
+            <?php } ?>
+        </tbody>
     </table>
 
-    <?php $conn->close();?>
+    <script>
+        // Llenar formulario de edición con datos del empleado seleccionado
+        function editEmployee(employee_id, first_name, last_name, dni, email, phone, role, salary, hire_date) {
+            document.getElementById('employee_id').value = employee_id;
+            document.getElementById('edit_first_name').value = first_name;
+            document.getElementById('edit_last_name').value = last_name;
+            document.getElementById('edit_dni').value = dni;
+            document.getElementById('edit_email').value = email;
+            document.getElementById('edit_phone').value = phone;
+            document.getElementById('edit_role').value = role;
+            document.getElementById('edit_salary').value = salary;
+            document.getElementById('edit_hire_date').value = hire_date;
+        }
+    </script>
 </body>
 </html>

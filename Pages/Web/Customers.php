@@ -3,7 +3,7 @@
 include_once '../../Database/connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // eliminación de clientes
+    // Eliminación de clientes
     if (isset($_POST['delete_customer_id'])) {
         $customerId = $_POST['delete_customer_id'];
 
@@ -11,17 +11,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $customerId);
 
-        if ($stmt->execute() === TRUE) {
+        if ($stmt->execute()) {
             echo 'Cliente eliminado exitosamente';
             header("Refresh: 2; URL=Customer.php");
             exit();
         } else {
-            echo 'Error al eliminar el cliente: ' . $conn->error;
+            echo 'Error al eliminar el cliente: ' . $stmt->error;
         }
 
         $stmt->close();
     }
-    // edición de clientes
+    // Edición de clientes
     elseif (isset($_POST['edit_customer_id'])) {
         $customerId = $_POST['edit_customer_id'];
         $fullName = $_POST['full_name'];
@@ -34,37 +34,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("sssssi", $fullName, $cuil, $address, $email, $phone, $customerId);
 
-        if ($stmt->execute() === TRUE) {
+        if ($stmt->execute()) {
             echo 'Cliente actualizado exitosamente';
             header("Refresh: 2; URL=Customer.php");
             exit();
         } else {
-            echo 'Error al actualizar el cliente: ' . $conn->error;
+            echo 'Error al actualizar el cliente: ' . $stmt->error;
         }
 
         $stmt->close();
     } else {
-        // dición de clientes
+        // Adición de clientes
         $fullName = $_POST['full_name'];
         $cuil = $_POST['cuil'];
         $address = $_POST['address'];
         $email = $_POST['email'];
         $phone = $_POST['phone'];
 
-        $sql = "INSERT INTO customer (full_name, cuil, address, email, phone) 
-                VALUES ('$fullName', '$cuil', '$address', '$email', '$phone')";
+        $sql = "INSERT INTO customer (full_name, cuil, address, email, phone) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssss", $fullName, $cuil, $address, $email, $phone);
 
-        if ($conn->query($sql) === TRUE) {
+        if ($stmt->execute()) {
             echo 'Cliente agregado exitosamente';
             header("Refresh: 2; URL=Customer.php");
             exit();
         } else {
-            if ($conn->errno == 1062) {
+            if ($stmt->errno == 1062) {
                 echo 'Error: Ya existe un cliente con el mismo CUIL o correo electrónico.';
             } else {
-                echo 'Error: ' . $conn->error;
+                echo 'Error: ' . $stmt->error;
             }
         }
+
+        $stmt->close();
     }
 }
 
@@ -125,11 +128,11 @@ if (isset($_GET['edit_customer_id'])) {
         if ($resultCustomers->num_rows > 0) {
             while($row = $resultCustomers->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td>" . $row["full_name"] . "</td>";
-                echo "<td>" . $row["cuil"] . "</td>";
-                echo "<td>" . $row["address"] . "</td>";
-                echo "<td>" . $row["email"] . "</td>";
-                echo "<td>" . $row["phone"] . "</td>";
+                echo "<td>" . htmlspecialchars($row["full_name"]) . "</td>";
+                echo "<td>" . htmlspecialchars($row["cuil"]) . "</td>";
+                echo "<td>" . htmlspecialchars($row["address"]) . "</td>";
+                echo "<td>" . htmlspecialchars($row["email"]) . "</td>";
+                echo "<td>" . htmlspecialchars($row["phone"]) . "</td>";
                 echo "<td>
                         <form method='POST' action='' style='display:inline;'>
                             <input type='hidden' name='delete_customer_id' value='{$row['customer_id']}'>
@@ -148,6 +151,7 @@ if (isset($_GET['edit_customer_id'])) {
         ?>
     </table>
 
-    <?php $conn->close();?>
+    <?php $conn->close(); ?>
+
 </body>
 </html>

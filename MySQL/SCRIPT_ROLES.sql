@@ -1,5 +1,5 @@
 use software_project_manager;
-INSERT INTO roles (description) VALUES
+INSERT INTO roles (role) VALUES
 ('CEO'),                                -- Chief Executive Officer
 ('CTO'),                                -- Chief Technology Officer
 ('CFO'),                                -- Chief Financial Officer
