@@ -114,14 +114,30 @@ $conn->close();
     <style>
         .container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+        }
+        .table-container {
+            width: 48%; 
+            margin-left: 10px; 
         }
         .form-container, .table-container {
             width: 48%;
         }
+        .table-scroll {
+            max-height: 600px; 
+            overflow-y: auto; 
+            border: 1px solid #ddd; 
+            padding: 10px; 
+        }
         table {
             width: 100%;
+            border-collapse: collapse; /* Opcional: mejora la apariencia de las tablas */
         }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        } 
     </style>
 </head>
 <body>
@@ -205,6 +221,7 @@ $conn->close();
 
         <div class="table-container">
             <h2>Lista de Pagos</h2>
+            <div class="table-scroll">
             <table border="1">
                 <thead>
                     <tr>
@@ -227,6 +244,7 @@ $conn->close();
                     <?php } ?>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 

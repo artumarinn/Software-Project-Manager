@@ -91,13 +91,29 @@ $conn->close();
     <style>
         .container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+        }
+        .table-container {
+            width: 48%; 
+            margin-left: 10px; 
         }
         .form-container, .table-container {
             width: 48%;
         }
+        .table-scroll {
+            max-height: 600px; 
+            overflow-y: auto; 
+            border: 1px solid #ddd; 
+            padding: 10px; 
+        }
         table {
             width: 100%;
+            border-collapse: collapse; /* Opcional: mejora la apariencia de las tablas */
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
     </style>
 </head>
@@ -173,9 +189,10 @@ $conn->close();
             </form>
         </div>
 
-        <div>
+        <div class="table-container">
             <!-- Lista de clientes -->
             <h2>Lista de Clientes</h2>
+            <div class="table-scroll">
             <table border="1">
                 <thead>
                     <tr>
@@ -196,10 +213,14 @@ $conn->close();
                             <td><?php echo $customer['address']; ?></td>
                             <td><?php echo $customer['email']; ?></td>
                             <td><?php echo $customer['phone']; ?></td>
+                            <td><button onclick="editProject('<?php echo $customer['customer_id']; ?>', '<?php echo $customer['full_name']; ?>', '<?php echo $customer['cuil']; ?>', '<?php echo $customer['address']; ?>', '<?php echo $customer['email']; ?>', 
+                            '<?php echo $customer['phone']; ?>')">Editar</button></td>
                         </tr>
                     <?php } ?>
                 </tbody>
             </table>
+            </div>
+            
         </div>
     </div>
 

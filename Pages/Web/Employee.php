@@ -13,20 +13,27 @@ if (isset($_POST['add_employee'])) {
     $salary = $_POST['salary'];
     $hire_date = $_POST['hire_date'];
 
-    $sql = "INSERT INTO employee (first_name, last_name, dni, email, phone, role_id, salary, hire_date)
+    if (strlen($dni) > 8) {
+        echo "The DNI is not valid";
+    } else {
+
+        $sql = "INSERT INTO employee (first_name, last_name, dni, email, phone, role_id, salary, hire_date)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssiis", $first_name, $last_name, $dni, $email, $phone, $role_id, $salary, $hire_date);
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssssiis", $first_name, $last_name, $dni, $email, $phone, $role_id, $salary, $hire_date);
 
-    if ($stmt->execute()) {
-        echo "Empleado agregado exitosamente";
-    } else {
-        echo "Error: " . $stmt->error;
-    }
+        if ($stmt->execute()) {
+            echo "Empleado agregado exitosamente";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
 
     $stmt->close();
+    }
 }
+
+    
 
 // editar empleado
 if (isset($_POST['edit_employee'])) {
@@ -110,13 +117,29 @@ $conn->close();
     <style>
         .container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
         }
+        .table-container {
+            width: 48%; 
+            margin-left: 10px; 
+}
         .form-container, .table-container {
             width: 48%;
         }
+        .table-scroll {
+            max-height: 600px; 
+            overflow-y: auto; 
+            border: 1px solid #ddd; 
+            padding: 10px; 
+        }
         table {
             width: 100%;
+            border-collapse: collapse; /* Opcional: mejora la apariencia de las tablas */
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
     </style>
 </head>
@@ -220,6 +243,7 @@ $conn->close();
 
         <div class="table-container">
             <h2>Lista de Empleados</h2>
+            <div class="table-scroll">
             <table border="1">
                 <thead>
                     <tr>
@@ -250,6 +274,7 @@ $conn->close();
                     <?php } ?>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 

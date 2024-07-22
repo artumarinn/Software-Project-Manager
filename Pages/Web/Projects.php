@@ -129,13 +129,29 @@ $conn->close();
     <style>
         .container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+        }
+        .table-container {
+            width: 48%; 
+            margin-left: 10px; 
         }
         .form-container, .table-container {
             width: 48%;
         }
+        .table-scroll {
+            max-height: 600px; 
+            overflow-y: auto; 
+            border: 1px solid #ddd; 
+            padding: 10px; 
+        }
         table {
             width: 100%;
+            border-collapse: collapse; /* Opcional: mejora la apariencia de las tablas */
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
     </style>
 </head>
@@ -188,7 +204,12 @@ $conn->close();
                     <?php } ?>
                 </select><br><br>
 
-
+                <label for="payment_id">ID del Pago:</label>
+                <select id="payment_id" name="payment_id" required>
+                    <?php foreach ($payment as $p) { ?>
+                        <option value="<?php echo $p['payment_id']; ?>"><?php echo $p['payment_id']; ?></option>
+                    <?php } ?>
+                </select><br><br>
 
                 <button type="submit" name="add_project">Agregar Proyecto</button>
             </form>
@@ -248,9 +269,10 @@ $conn->close();
             </form>
         </div>
 
-        <div>
+        <div class="table-container">
             <!-- Lista de proyectos -->
             <h2>Lista de Proyectos</h2>
+            <div class="table-scroll">
             <table border="1">
                 <thead>
                     <tr>
@@ -261,7 +283,7 @@ $conn->close();
                         <th>Fecha de Fin</th>
                         <th>Fecha de Fin Real</th>
                         <th>ID del Cliente</th>
-                        <th>ID del Estado</th>
+                        <th>Estado</th>
                         <th>ID del Pago</th>
                     </tr>
                 </thead>
@@ -282,11 +304,11 @@ $conn->close();
                     <?php } ?>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 
     <script>
-        
         function editProject(project_id, name, description, start_date, end_date, actual_end_date, customer_id, status_id, payment_id) {
             document.getElementById('project_id').value = project_id;
             document.getElementById('edit_name').value = name;

@@ -1,4 +1,16 @@
 use software_project_manager;
+-- Agregar roles en una empresa de software
+INSERT INTO roles (role) VALUES ('Desarrollador Junior');
+INSERT INTO roles (role) VALUES ('Desarrollador Senior');
+INSERT INTO roles (role) VALUES ('Arquitecto de Software');
+INSERT INTO roles (role) VALUES ('Analista de Sistemas');
+INSERT INTO roles (role) VALUES ('Ingeniero de QA');
+INSERT INTO roles (role) VALUES ('Gestor de Proyectos');
+INSERT INTO roles (role) VALUES ('Product Owner');
+INSERT INTO roles (role) VALUES ('Scrum Master');
+INSERT INTO roles (role) VALUES ('Administrador de Sistemas');
+INSERT INTO roles (role) VALUES ('Soporte Técnico');
+
 INSERT INTO roles (role) VALUES
 ('CEO'),                                -- Chief Executive Officer
 ('CTO'),                                -- Chief Technology Officer
