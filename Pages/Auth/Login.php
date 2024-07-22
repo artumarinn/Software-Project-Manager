@@ -20,10 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
             header("Location: ../Web/ControlPanel.php"); 
             exit();
         } else {
-            $loginMessage = "Incorrect password.";
+            $loginMessage = "Contraseña Incorrecta.";
         }
     } else {
-        $loginMessage = "DNI not found.";
+        $loginMessage = "DNI no encontrado.";
     }
 
     $conn->close();
@@ -40,9 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 </head>
 <body>
 <header>
-        <h1>Software Project Manager</h1>
+        <h1>Gestor de Proyectos de Software</h1>
         <nav>
-        <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Auth/Register.php">Register</a>
+        <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Auth/Register.php">Registro</a>
         </nav>
     </header>
     <div>
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
         <form method="POST">
             <label for="dni">DNI:</label><br>
             <input type="number" id="dni" name="dni" required><br><br>
-            <label for="password">Password:</label><br>
+            <label for="password">Contraseña:</label><br>
             <input type="password" id="password" name="password" required><br><br>
             <button type="submit" name="login">Login</button>
         </form>

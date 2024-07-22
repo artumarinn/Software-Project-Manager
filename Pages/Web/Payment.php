@@ -6,14 +6,14 @@ include_once '../../Database/connection.php';
 if (isset($_POST['add_payment'])) {
     $date = $_POST['date'];
     $amount = $_POST['amount'];
-    $payment_method_id = $_POST['payment_method'];
-    $payment_status_id = $_POST['payment_status'];
+    $payment_method_id = $_POST['payment_method_id'];
+    $payment_status_id = $_POST['payment_status_id'];
 
     $sql = "INSERT INTO payment (date, amount, payment_method_id, payment_status_id)
             VALUES (?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sdii", $date, $amount, $payment_method_id, $payment_status_id);
+    $stmt->bind_param("sddi", $date, $amount, $payment_method_id, $payment_status_id);
 
     if ($stmt->execute()) {
         echo "Pago agregado exitosamente";
@@ -29,14 +29,14 @@ if (isset($_POST['edit_payment'])) {
     $payment_id = $_POST['payment_id'];
     $date = $_POST['date'];
     $amount = $_POST['amount'];
-    $payment_method_id = $_POST['payment_method'];
-    $payment_status_id = $_POST['payment_status'];
+    $payment_method_id = $_POST['payment_method_id'];
+    $payment_status_id = $_POST['payment_status_id'];
 
     $sql = "UPDATE payment SET date=?, amount=?, payment_method_id=?, payment_status_id=?
             WHERE payment_id=?";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sdiii", $date, $amount, $payment_method_id, $payment_status_id, $payment_id);
+    $stmt->bind_param("sddsi", $date, $amount, $payment_method_id, $payment_status_id, $payment_id);
 
     if ($stmt->execute()) {
         echo "Pago actualizado exitosamente";
@@ -65,9 +65,9 @@ if (isset($_POST['delete_payment'])) {
     $stmt->close();
 }
 
-// Obtener métodos de pago
+// obtener métodos de pago
 $payment_methods = [];
-$sql = "SELECT payment_method_id, description FROM payment_method";
+$sql = "SELECT * FROM payment_method";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -76,9 +76,9 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Obtener estados de pago
+// obtener estados de pago
 $payment_statuses = [];
-$sql = "SELECT payment_status_id, payment_status FROM payment_status";
+$sql = "SELECT * FROM payment_status";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -89,10 +89,9 @@ if ($result->num_rows > 0) {
 
 // Obtener pagos
 $payments = [];
-$sql = "SELECT payment.payment_id, payment.date, payment.amount, payment_method.description AS payment_method, payment_status.payment_status
-        FROM payment
-        JOIN payment_method ON payment.payment_method_id = payment_method.payment_method_id
-        JOIN payment_status ON payment.payment_status_id = payment_status.payment_status_id";
+$sql = "SELECT * FROM payment p
+        JOIN payment_method pm ON p.payment_method_id = pm.payment_method_id
+        JOIN payment_status ps ON p.payment_status_id = ps.payment_status_id";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -137,84 +136,85 @@ $conn->close();
             padding: 8px;
             text-align: left;
             border-bottom: 1px solid #ddd;
-        } 
+        }
     </style>
 </head>
 <body>
     <header>
         <div>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/ControlPanel.php" class="web-title">Software Project Manager</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/ControlPanel.php" class="web-title">Gestor de Proyectos de Software</a>
         </div>
         <nav>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Projects.php">Projects</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Requirements.php">Requirements</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Employee.php">Employee</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Customers.php">Customers</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Payment.php">Payment</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Projects.php">Proyectos</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Requirements.php">Requisitos</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Employee.php">Empleados</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Customers.php">Clientes</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Payment.php">Pagos</a>
         </nav>
     </header>
     <h1>Gestión de Pagos</h1>
 
     <div class="container">
         <div class="form-container">
-            <!-- formulario para agregar pagos -->
+            <!-- Formulario para agregar pagos -->
             <h2>Agregar Pago</h2>
             <form action="" method="POST">
                 <label for="date">Fecha:</label>
                 <input type="date" id="date" name="date" required><br><br>
 
                 <label for="amount">Monto:</label>
-                <input type="number" id="amount" name="amount" step="0.01" required><br><br>
+                <input type="text" id="amount" name="amount" required><br><br>
 
-                <label for="payment_method">Método de Pago:</label>
-                <select id="payment_method" name="payment_method" required>
-                    <?php foreach ($payment_methods as $method) { ?>
-                        <option value="<?php echo $method['payment_method_id']; ?>"><?php echo $method['description']; ?></option>
+                <label for="payment_method_id">Método de Pago:</label>
+                <select id="payment_method_id" name="payment_method_id" required>
+                    <?php foreach ($payment_methods as $pm) { ?>
+                        <option value="<?php echo $pm['payment_method_id']; ?>"><?php echo $pm['description']; ?></option>
                     <?php } ?>
                 </select><br><br>
 
-                <label for="payment_status">Estado de Pago:</label>
-                <select id="payment_status" name="payment_status" required>
-                    <?php foreach ($payment_statuses as $status) { ?>
-                        <option value="<?php echo $status['payment_status_id']; ?>"><?php echo $status['payment_status']; ?></option>
+                <label for="payment_status_id">Estado del Pago:</label>
+                <select id="payment_status_id" name="payment_status_id" required>
+                    <?php foreach ($payment_statuses as $ps) { ?>
+                        <option value="<?php echo $ps['payment_status_id']; ?>"><?php echo $ps['payment_status']; ?></option>
                     <?php } ?>
                 </select><br><br>
 
                 <button type="submit" name="add_payment">Agregar Pago</button>
             </form>
 
-            <!-- formulario para editar pagos -->
+            <!-- Formulario para editar pagos -->
             <h2>Editar Pago</h2>
-            <form action="" method="POST">
-                <input type="hidden" id="payment_id" name="payment_id">
+            <form id="editForm" action="" method="POST">
+                <input type="hidden" id="edit_payment_id" name="payment_id">
                 <label for="edit_date">Fecha:</label>
                 <input type="date" id="edit_date" name="date" required><br><br>
 
                 <label for="edit_amount">Monto:</label>
-                <input type="number" id="edit_amount" name="amount" step="0.01" required><br><br>
+                <input type="text" id="edit_amount" name="amount" required><br><br>
 
-                <label for="edit_payment_method">Método de Pago:</label>
-                <select id="edit_payment_method" name="payment_method" required>
-                    <?php foreach ($payment_methods as $method) { ?>
-                        <option value="<?php echo $method['payment_method_id']; ?>"><?php echo $method['description']; ?></option>
+                <label for="edit_payment_method_id">Método de Pago:</label>
+                <select id="edit_payment_method_id" name="payment_method_id" required>
+                    <?php foreach ($payment_methods as $pm) { ?>
+                        <option value="<?php echo $pm['payment_method_id']; ?>"><?php echo $pm['description']; ?></option>
                     <?php } ?>
                 </select><br><br>
 
-                <label for="edit_payment_status">Estado de Pago:</label>
-                <select id="edit_payment_status" name="payment_status" required>
-                    <?php foreach ($payment_statuses as $status) { ?>
-                        <option value="<?php echo $status['payment_status_id']; ?>"><?php echo $status['payment_status']; ?></option>
+                <label for="edit_payment_status_id">Estado del Pago:</label>
+                <select id="edit_payment_status_id" name="payment_status_id" required>
+                    <?php foreach ($payment_statuses as $ps) { ?>
+                        <option value="<?php echo $ps['payment_status_id']; ?>"><?php echo $ps['payment_status']; ?></option>
                     <?php } ?>
                 </select><br><br>
 
                 <button type="submit" name="edit_payment">Actualizar Pago</button>
             </form>
 
-            <!-- formulario para eliminar pagos -->
+            <!-- Formulario para eliminar pagos -->
             <h2>Eliminar Pago</h2>
             <form action="" method="POST">
                 <label for="delete_payment_id">ID del Pago:</label>
-                <input type="text" id="delete_payment_id" name="payment_id" required><br><br>
+                <input type="number" id="delete_payment_id" name="payment_id" required><br><br>
+
                 <button type="submit" name="delete_payment">Eliminar Pago</button>
             </form>
         </div>
@@ -222,39 +222,49 @@ $conn->close();
         <div class="table-container">
             <h2>Lista de Pagos</h2>
             <div class="table-scroll">
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Fecha</th>
-                        <th>Monto</th>
-                        <th>Método de Pago</th>
-                        <th>Estado de Pago</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($payments as $payment) { ?>
+                <table>
+                    <thead>
                         <tr>
-                            <td><?php echo $payment['payment_id']; ?></td>
-                            <td><?php echo $payment['date']; ?></td>
-                            <td><?php echo $payment['amount']; ?></td>
-                            <td><?php echo $payment['payment_method']; ?></td>
-                            <td><?php echo $payment['payment_status']; ?></td>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Monto</th>
+                            <th>Método de Pago</th>
+                            <th>Estado del Pago</th>
+                            <th>Acciones</th>
                         </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($payments as $p) { ?>
+                            <tr>
+                                <td><?php echo $p['payment_id']; ?></td>
+                                <td><?php echo $p['date']; ?></td>
+                                <td><?php echo $p['amount']; ?></td>
+                                <td><?php echo $p['description']; ?></td>
+                                <td><?php echo $p['payment_status']; ?></td>
+                                <td>
+                                    <button onclick="editPayment(
+                                        '<?php echo $p['payment_id']; ?>',
+                                        '<?php echo $p['date']; ?>',
+                                        '<?php echo $p['amount']; ?>',
+                                        '<?php echo $p['payment_method_id']; ?>',
+                                        '<?php echo $p['payment_status_id']; ?>'
+                                    )">Editar</button>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <script>
-        function editPayment(payment_id, date, amount, payment_method, payment_status) {
-            document.getElementById('payment_id').value = payment_id;
+        function editPayment(payment_id, date, amount, payment_method_id, payment_status_id) {
+            document.getElementById('edit_payment_id').value = payment_id;
             document.getElementById('edit_date').value = date;
             document.getElementById('edit_amount').value = amount;
-            document.getElementById('edit_payment_method').value = payment_method;
-            document.getElementById('edit_payment_status').value = payment_status;
+            document.getElementById('edit_payment_method_id').value = payment_method_id;
+            document.getElementById('edit_payment_status_id').value = payment_status_id;
         }
     </script>
 </body>

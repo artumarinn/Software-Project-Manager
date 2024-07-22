@@ -9,31 +9,24 @@ if (isset($_POST['add_employee'])) {
     $dni = $_POST['dni'];
     $email = $_POST['email'];
     $phone = $_POST['phone'];
-    $role_id = $_POST['role'];
+    $role_id = $_POST['role_id'];
     $salary = $_POST['salary'];
     $hire_date = $_POST['hire_date'];
 
-    if (strlen($dni) > 8) {
-        echo "The DNI is not valid";
-    } else {
-
-        $sql = "INSERT INTO employee (first_name, last_name, dni, email, phone, role_id, salary, hire_date)
+    $sql = "INSERT INTO employee (first_name, last_name, dni, email, phone, role_id, salary, hire_date)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssiis", $first_name, $last_name, $dni, $email, $phone, $role_id, $salary, $hire_date);
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssssids", $first_name, $last_name, $dni, $email, $phone, $role_id, $salary, $hire_date);
 
-        if ($stmt->execute()) {
-            echo "Empleado agregado exitosamente";
-        } else {
-            echo "Error: " . $stmt->error;
-        }
+    if ($stmt->execute()) {
+        echo "Empleado agregado exitosamente";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
 
     $stmt->close();
-    }
 }
-
-    
 
 // editar empleado
 if (isset($_POST['edit_employee'])) {
@@ -43,7 +36,7 @@ if (isset($_POST['edit_employee'])) {
     $dni = $_POST['dni'];
     $email = $_POST['email'];
     $phone = $_POST['phone'];
-    $role_id = $_POST['role'];
+    $role_id = $_POST['role_id'];
     $salary = $_POST['salary'];
     $hire_date = $_POST['hire_date'];
 
@@ -51,7 +44,7 @@ if (isset($_POST['edit_employee'])) {
             WHERE employee_id=?";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssiisi", $first_name, $last_name, $dni, $email, $phone, $role_id, $salary, $hire_date, $employee_id);
+    $stmt->bind_param("sssssidsi", $first_name, $last_name, $dni, $email, $phone, $role_id, $salary, $hire_date, $employee_id);
 
     if ($stmt->execute()) {
         echo "Empleado actualizado exitosamente";
@@ -80,9 +73,9 @@ if (isset($_POST['delete_employee'])) {
     $stmt->close();
 }
 
-// Obtener roles
+// obtener roles
 $roles = [];
-$sql = "SELECT role_id, role FROM roles";
+$sql = "SELECT * FROM roles";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -93,9 +86,8 @@ if ($result->num_rows > 0) {
 
 // Obtener empleados
 $employees = [];
-$sql = "SELECT employee.employee_id, employee.first_name, employee.last_name, employee.dni, employee.email, employee.phone, roles.role, employee.salary, employee.hire_date
-        FROM employee
-        JOIN roles ON employee.role_id = roles.role_id";
+$sql = "SELECT * FROM employee e
+        JOIN roles r ON e.role_id = r.role_id";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -122,7 +114,7 @@ $conn->close();
         .table-container {
             width: 48%; 
             margin-left: 10px; 
-}
+        }
         .form-container, .table-container {
             width: 48%;
         }
@@ -146,21 +138,21 @@ $conn->close();
 <body>
     <header>
         <div>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/ControlPanel.php" class="web-title">Software Project Manager</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/ControlPanel.php" class="web-title">Gestor de Proyectos de Software</a>
         </div>
         <nav>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Projects.php">Projects</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Requirements.php">Requirements</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Employee.php">Employee</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Customers.php">Customers</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Payment.php">Payment</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Projects.php">Proyectos</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Requirements.php">Requisitos</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Employee.php">Empleados</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Customers.php">Clientes</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Payment.php">Pagos</a>
         </nav>
     </header>
     <h1>Gestión de Empleados</h1>
 
     <div class="container">
         <div class="form-container">
-            <!-- formulario para agregar empleados -->
+            <!-- Formulario para agregar empleados -->
             <h2>Agregar Empleado</h2>
             <form action="" method="POST">
                 <label for="first_name">Nombre:</label>
@@ -172,21 +164,21 @@ $conn->close();
                 <label for="dni">DNI:</label>
                 <input type="text" id="dni" name="dni" required><br><br>
 
-                <label for="email">Email:</label>
+                <label for="email">Correo Electrónico:</label>
                 <input type="email" id="email" name="email" required><br><br>
 
                 <label for="phone">Teléfono:</label>
                 <input type="text" id="phone" name="phone" required><br><br>
 
-                <label for="role">Rol:</label>
-                <select id="role" name="role" required>
-                    <?php foreach ($roles as $role) { ?>
-                        <option value="<?php echo $role['role_id']; ?>"><?php echo $role['role']; ?></option>
+                <label for="role_id">Rol:</label>
+                <select id="role_id" name="role_id" required>
+                    <?php foreach ($roles as $r) { ?>
+                        <option value="<?php echo $r['role_id']; ?>"><?php echo $r['role']; ?></option>
                     <?php } ?>
                 </select><br><br>
 
                 <label for="salary">Salario:</label>
-                <input type="number" id="salary" name="salary" step="0.01" required><br><br>
+                <input type="text" id="salary" name="salary" required><br><br>
 
                 <label for="hire_date">Fecha de Contratación:</label>
                 <input type="date" id="hire_date" name="hire_date" required><br><br>
@@ -194,13 +186,10 @@ $conn->close();
                 <button type="submit" name="add_employee">Agregar Empleado</button>
             </form>
 
-            <!-- formulario para editar empleados -->
+            <!-- Formulario para editar empleados -->
             <h2>Editar Empleado</h2>
             <form action="" method="POST">
                 <input type="hidden" id="employee_id" name="employee_id">
-                <label for="edit_id">ID:</label>
-                <input type="text" id="edit_id" name="employee_id" required><br><br>
-
                 <label for="edit_first_name">Nombre:</label>
                 <input type="text" id="edit_first_name" name="first_name" required><br><br>
 
@@ -210,21 +199,21 @@ $conn->close();
                 <label for="edit_dni">DNI:</label>
                 <input type="text" id="edit_dni" name="dni" required><br><br>
 
-                <label for="edit_email">Email:</label>
+                <label for="edit_email">Correo Electrónico:</label>
                 <input type="email" id="edit_email" name="email" required><br><br>
 
                 <label for="edit_phone">Teléfono:</label>
                 <input type="text" id="edit_phone" name="phone" required><br><br>
 
-                <label for="edit_role">Rol:</label>
-                <select id="edit_role" name="role" required>
-                    <?php foreach ($roles as $role) { ?>
-                        <option value="<?php echo $role['role_id']; ?>"><?php echo $role['role']; ?></option>
+                <label for="edit_role_id">Rol:</label>
+                <select id="edit_role_id" name="role_id" required>
+                    <?php foreach ($roles as $r) { ?>
+                        <option value="<?php echo $r['role_id']; ?>"><?php echo $r['role']; ?></option>
                     <?php } ?>
                 </select><br><br>
 
                 <label for="edit_salary">Salario:</label>
-                <input type="number" id="edit_salary" name="salary" step="0.01" required><br><br>
+                <input type="text" id="edit_salary" name="salary" required><br><br>
 
                 <label for="edit_hire_date">Fecha de Contratación:</label>
                 <input type="date" id="edit_hire_date" name="hire_date" required><br><br>
@@ -232,11 +221,12 @@ $conn->close();
                 <button type="submit" name="edit_employee">Actualizar Empleado</button>
             </form>
 
-            <!-- formulario para eliminar empleados -->
+            <!-- Formulario para eliminar empleados -->
             <h2>Eliminar Empleado</h2>
             <form action="" method="POST">
                 <label for="delete_employee_id">ID del Empleado:</label>
-                <input type="text" id="delete_employee_id" name="employee_id" required><br><br>
+                <input type="number" id="delete_employee_id" name="employee_id" required><br><br>
+
                 <button type="submit" name="delete_employee">Eliminar Empleado</button>
             </form>
         </div>
@@ -244,52 +234,65 @@ $conn->close();
         <div class="table-container">
             <h2>Lista de Empleados</h2>
             <div class="table-scroll">
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>DNI</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Rol</th>
-                        <th>Salario</th>
-                        <th>Fecha de Contratación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($employees as $employee) { ?>
+                <table>
+                    <thead>
                         <tr>
-                            <td><?php echo $employee['employee_id']; ?></td>
-                            <td><?php echo $employee['first_name']; ?></td>
-                            <td><?php echo $employee['last_name']; ?></td>
-                            <td><?php echo $employee['dni']; ?></td>
-                            <td><?php echo $employee['email']; ?></td>
-                            <td><?php echo $employee['phone']; ?></td>
-                            <td><?php echo $employee['role']; ?></td>
-                            <td><?php echo $employee['salary']; ?></td>
-                            <td><?php echo $employee['hire_date']; ?></td>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>DNI</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th>Rol</th>
+                            <th>Salario</th>
+                            <th>Fecha de Contratación</th>
                         </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($employees as $e) { ?>
+                            <tr>
+                                <td><?php echo $e['employee_id']; ?></td>
+                                <td><?php echo $e['first_name']; ?></td>
+                                <td><?php echo $e['last_name']; ?></td>
+                                <td><?php echo $e['dni']; ?></td>
+                                <td><?php echo $e['email']; ?></td>
+                                <td><?php echo $e['phone']; ?></td>
+                                <td><?php echo $e['role']; ?></td>
+                                <td><?php echo $e['salary']; ?></td>
+                                <td><?php echo $e['hire_date']; ?></td>
+                                <td>
+                                <button type="button" onclick="populateEditForm(
+                                    <?php echo $e['employee_id']; ?>,
+                                   '<?php echo addslashes($e['first_name']); ?>',
+                                   '<?php echo addslashes($e['last_name']); ?>',
+                                   '<?php echo addslashes($e['dni']); ?>',
+                                   '<?php echo addslashes($e['email']); ?>',
+                                   '<?php echo addslashes($e['phone']); ?>',
+                                    <?php echo $e['role_id']; ?>,
+                                   '<?php echo $e['salary']; ?>',
+                                   '<?php echo $e['hire_date']; ?>'
+                                )">Editar</button>
+                                </td>       
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-
     <script>
-        function editEmployee(employee_id, first_name, last_name, dni, email, phone, role, salary, hire_date) {
-            document.getElementById('employee_id').value = employee_id;
-            document.getElementById('edit_first_name').value = first_name;
-            document.getElementById('edit_last_name').value = last_name;
-            document.getElementById('edit_dni').value = dni;
-            document.getElementById('edit_email').value = email;
-            document.getElementById('edit_phone').value = phone;
-            document.getElementById('edit_role').value = role;
-            document.getElementById('edit_salary').value = salary;
-            document.getElementById('edit_hire_date').value = hire_date;
-        }
-    </script>
+        function populateEditForm(id, firstName, lastName, dni, email, phone, roleId, salary, hireDate) {
+           document.getElementById('employee_id').value = id;
+           document.getElementById('edit_first_name').value = firstName;
+           document.getElementById('edit_last_name').value = lastName;
+           document.getElementById('edit_dni').value = dni;
+           document.getElementById('edit_email').value = email;
+           document.getElementById('edit_phone').value = phone;
+           document.getElementById('edit_role_id').value = roleId;
+           document.getElementById('edit_salary').value = salary;
+           document.getElementById('edit_hire_date').value = hireDate;
+        }    
+</script>
+
 </body>
 </html>

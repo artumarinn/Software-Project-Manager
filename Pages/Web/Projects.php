@@ -8,7 +8,7 @@ if (isset($_POST['add_project'])) {
     $description = $_POST['description'];
     $start_date = $_POST['start_date'];
     $end_date = $_POST['end_date'];
-    $actual_end_date = $_POST['actual_end_date'];
+    $actual_end_date = $_POST['actual_end_date'] ?: NULL;
     $customer_id = $_POST['customer_id'];
     $status_id = $_POST['status_id'];
     $payment_id = $_POST['payment_id'];
@@ -35,7 +35,7 @@ if (isset($_POST['edit_project'])) {
     $description = $_POST['description'];
     $start_date = $_POST['start_date'];
     $end_date = $_POST['end_date'];
-    $actual_end_date = $_POST['actual_end_date'];
+    $actual_end_date = $_POST['actual_end_date']?: NULL;
     $customer_id = $_POST['customer_id'];
     $status_id = $_POST['status_id'];
     $payment_id = $_POST['payment_id'];
@@ -107,7 +107,9 @@ if ($result->num_rows > 0) {
 
 // Obtener proyectos
 $projects = [];
-$sql = "SELECT * FROM project";
+$sql = "SELECT p.*, s.description AS status_description 
+        FROM project p 
+        JOIN status s ON p.status_id = s.status_id";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -158,14 +160,14 @@ $conn->close();
 <body>
     <header>
         <div>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/ControlPanel.php" class="web-title">Software Project Manager</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/ControlPanel.php" class="web-title">Gestor de Proyectos de Software</a>
         </div>
         <nav>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Projects.php">Projects</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Requirements.php">Requirements</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Employee.php">Employee</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Customers.php">Customers</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Payment.php">Payment</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Projects.php">Proyectos</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Requirements.php">Requisitos</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Employee.php">Empleados</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Customers.php">Clientes</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Payment.php">Pago</a>
         </nav>
     </header>
     <h1>Gestión de Proyectos</h1>
@@ -188,7 +190,7 @@ $conn->close();
                 <input type="date" id="end_date" name="end_date" required><br><br>
 
                 <label for="actual_end_date">Fecha de Fin Real:</label>
-                <input type="date" id="actual_end_date" name="actual_end_date" required><br><br>
+                <input type="date" id="actual_end_date" name="actual_end_date" ><br><br>
 
                 <label for="customer_id">ID del Cliente:</label>
                 <select id="customer_id" name="customer_id" required>
@@ -218,9 +220,6 @@ $conn->close();
             <h2>Editar Proyecto</h2>
             <form action="" method="POST">
                 <input type="hidden" id="project_id" name="project_id">
-                <label for="edit_id">ID:</label>
-                <input type="text" id="edit_id" name="project_id" required><br><br>
-
                 <label for="edit_name">Nombre:</label>
                 <input type="text" id="edit_name" name="name" required><br><br>
 
@@ -234,7 +233,7 @@ $conn->close();
                 <input type="date" id="edit_end_date" name="end_date" required><br><br>
 
                 <label for="edit_actual_end_date">Fecha de Fin Real:</label>
-                <input type="date" id="edit_actual_end_date" name="actual_end_date" required><br><br>
+                <input type="date" id="edit_actual_end_date" name="actual_end_date" ><br><br>
 
                 <label for="edit_customer_id">ID del Cliente:</label>
                 <select id="edit_customer_id" name="customer_id" required>
@@ -251,7 +250,7 @@ $conn->close();
                 </select><br><br>
 
                 <label for="edit_payment_id">ID del Pago:</label>
-                <select id="edit_payment_id" name="payment_id" required>
+                <select id="edit_payment_id" name="payment_id" >
                     <?php foreach ($payment as $p) { ?>
                         <option value="<?php echo $p['payment_id']; ?>"><?php echo $p['payment_id']; ?></option>
                     <?php } ?>
@@ -297,7 +296,7 @@ $conn->close();
                             <td><?php echo $project['end_date']; ?></td>
                             <td><?php echo $project['actual_end_date']; ?></td>
                             <td><?php echo $project['customer_id']; ?></td>
-                            <td><?php echo $project['status_id']; ?></td>
+                            <td><?php echo $project['status_description']; ?></td>
                             <td><?php echo $project['payment_id']; ?></td>
                             <td><button onclick="editProject('<?php echo $project['project_id']; ?>', '<?php echo $project['name']; ?>', '<?php echo $project['description']; ?>', '<?php echo $project['start_date']; ?>', '<?php echo $project['end_date']; ?>', '<?php echo $project['actual_end_date']; ?>', '<?php echo $project['customer_id']; ?>', '<?php echo $project['status_id']; ?>', '<?php echo $project['payment_id']; ?>')">Editar</button></td>
                         </tr>

@@ -2,7 +2,7 @@
 
 include_once '../../Database/connection.php';
 
-// agregar cliente
+// Agregar cliente
 if (isset($_POST['add_customer'])) {
     $full_name = $_POST['full_name'];
     $cuil = $_POST['cuil'];
@@ -25,7 +25,7 @@ if (isset($_POST['add_customer'])) {
     $stmt->close();
 }
 
-// editar cliente
+// Editar cliente
 if (isset($_POST['edit_customer'])) {
     $customer_id = $_POST['customer_id'];
     $full_name = $_POST['full_name'];
@@ -35,7 +35,7 @@ if (isset($_POST['edit_customer'])) {
     $phone = $_POST['phone'];
 
     $sql = "UPDATE customer SET full_name=?, cuil=?, address=?, email=?, phone=?
-            WHERE customer_id=? ";
+            WHERE customer_id=?";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sssssi", $full_name, $cuil, $address, $email, $phone, $customer_id);
@@ -49,7 +49,7 @@ if (isset($_POST['edit_customer'])) {
     $stmt->close();
 }
 
-// eliminar cliente
+// Eliminar cliente
 if (isset($_POST['delete_customer'])) {
     $customer_id = $_POST['customer_id'];
 
@@ -108,7 +108,7 @@ $conn->close();
         }
         table {
             width: 100%;
-            border-collapse: collapse; /* Opcional: mejora la apariencia de las tablas */
+            border-collapse: collapse;
         }
         th, td {
             padding: 8px;
@@ -120,14 +120,14 @@ $conn->close();
 <body>
     <header>
         <div>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/ControlPanel.php" class="web-title">Software Project Manager</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/ControlPanel.php" class="web-title">Gestor de Proyectos de Software</a>
         </div>
         <nav>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Projects.php">Projects</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Requirements.php">Requirements</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Employee.php">Employee</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Customers.php">Customers</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Payment.php">Payment</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Projects.php">Proyectos</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Requirements.php">Requisitos</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Employee.php">Empleados</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Customers.php">Clientes</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Payment.php">Pagos</a>
         </nav>
     </header>
     <h1>Gestión de Clientes</h1>
@@ -146,7 +146,7 @@ $conn->close();
                 <label for="address">Dirección:</label>
                 <input type="text" id="address" name="address" required><br><br>
 
-                <label for="email">Email:</label>
+                <label for="email">Correo Electrónico:</label>
                 <input type="email" id="email" name="email" required><br><br>
 
                 <label for="phone">Teléfono:</label>
@@ -159,9 +159,6 @@ $conn->close();
             <h2>Editar Cliente</h2>
             <form action="" method="POST">
                 <input type="hidden" id="customer_id" name="customer_id">
-                <label for="edit_id">ID:</label>
-                <input type="text" id="edit_id" name="customer_id" required><br><br>
-
                 <label for="edit_full_name">Nombre Completo:</label>
                 <input type="text" id="edit_full_name" name="full_name" required><br><br>
 
@@ -171,7 +168,7 @@ $conn->close();
                 <label for="edit_address">Dirección:</label>
                 <input type="text" id="edit_address" name="address" required><br><br>
 
-                <label for="edit_email">Email:</label>
+                <label for="edit_email">Correo Electrónico:</label>
                 <input type="email" id="edit_email" name="email" required><br><br>
 
                 <label for="edit_phone">Teléfono:</label>
@@ -184,51 +181,56 @@ $conn->close();
             <h2>Eliminar Cliente</h2>
             <form action="" method="POST">
                 <label for="delete_customer_id">ID del Cliente:</label>
-                <input type="text" id="delete_customer_id" name="customer_id" required><br><br>
+                <input type="number" id="delete_customer_id" name="customer_id" required><br><br>
+
                 <button type="submit" name="delete_customer">Eliminar Cliente</button>
             </form>
         </div>
 
         <div class="table-container">
-            <!-- Lista de clientes -->
             <h2>Lista de Clientes</h2>
             <div class="table-scroll">
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre Completo</th>
-                        <th>CUIL-CUIT</th>
-                        <th>Dirección</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($customers as $customer) { ?>
+                <table>
+                    <thead>
                         <tr>
-                            <td><?php echo $customer['customer_id']; ?></td>
-                            <td><?php echo $customer['full_name']; ?></td>
-                            <td><?php echo $customer['cuil']; ?></td>
-                            <td><?php echo $customer['address']; ?></td>
-                            <td><?php echo $customer['email']; ?></td>
-                            <td><?php echo $customer['phone']; ?></td>
-                            <td><button onclick="editProject('<?php echo $customer['customer_id']; ?>', '<?php echo $customer['full_name']; ?>', '<?php echo $customer['cuil']; ?>', '<?php echo $customer['address']; ?>', '<?php echo $customer['email']; ?>', 
-                            '<?php echo $customer['phone']; ?>')">Editar</button></td>
+                            <th>ID</th>
+                            <th>Nombre Completo</th>
+                            <th>CUIL-CUIT</th>
+                            <th>Dirección</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
                         </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($customers as $c) { ?>
+                            <tr>
+                                <td><?php echo $c['customer_id']; ?></td>
+                                <td><?php echo $c['full_name']; ?></td>
+                                <td><?php echo $c['cuil']; ?></td>
+                                <td><?php echo $c['address']; ?></td>
+                                <td><?php echo $c['email']; ?></td>
+                                <td><?php echo $c['phone']; ?></td>
+                                <td>
+                                    <button type="button" onclick="populateEditForm(
+                                        <?php echo $c['customer_id']; ?>,
+                                        '<?php echo addslashes($c['full_name']); ?>',
+                                        '<?php echo addslashes($c['cuil']); ?>',
+                                        '<?php echo addslashes($c['address']); ?>',
+                                        '<?php echo addslashes($c['email']); ?>',
+                                        '<?php echo addslashes($c['phone']); ?>'
+                                    )">Editar</button>
+                                </td>       
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
             </div>
-            
         </div>
     </div>
-
     <script>
-        
-        function editCustomer(customer_id, full_name, cuil, address, email, phone) {
-            document.getElementById('customer_id').value = customer_id;
-            document.getElementById('edit_full_name').value = full_name;
+        function populateEditForm(id, fullName, cuil, address, email, phone) {
+            document.getElementById('customer_id').value = id;
+            document.getElementById('edit_full_name').value = fullName;
             document.getElementById('edit_cuil').value = cuil;
             document.getElementById('edit_address').value = address;
             document.getElementById('edit_email').value = email;
