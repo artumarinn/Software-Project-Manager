@@ -1,14 +1,13 @@
 <?php
-
 include_once '../../Database/connection.php';
 
 // agregar requisito
-if (isset($_POST['add_requirement'])) {
+if (isset($_POST['action']) && $_POST['action'] == 'add_requirement') {
     $project_id = $_POST['project_id'];
     $description = $_POST['description'];
     $start_date = $_POST['start_date'];
     $end_date = $_POST['end_date'];
-    $actual_end_date = $_POST['actual_end_date'] ?: NULL; 
+    $actual_end_date = $_POST['actual_end_date'] ?: NULL;
     $employee_id = $_POST['employee_id'];
     $priority_id = $_POST['priority_id'];
     $status_id = $_POST['status_id'];
@@ -20,22 +19,23 @@ if (isset($_POST['add_requirement'])) {
     $stmt->bind_param("issssiii", $project_id, $description, $start_date, $end_date, $actual_end_date, $employee_id, $priority_id, $status_id);
 
     if ($stmt->execute()) {
-        echo "Requisito agregado exitosamente";
+        echo json_encode(['status' => 'success', 'message' => 'Requisito agregado exitosamente']);
     } else {
-        echo "Error: " . $stmt->error;
+        echo json_encode(['status' => 'error', 'message' => $stmt->error]);
     }
 
     $stmt->close();
+    exit;
 }
 
 // editar requisito
-if (isset($_POST['edit_requirement'])) {
+if (isset($_POST['action']) && $_POST['action'] == 'edit_requirement') {
     $requirement_id = $_POST['requirement_id'];
     $project_id = $_POST['project_id'];
     $description = $_POST['description'];
     $start_date = $_POST['start_date'];
     $end_date = $_POST['end_date'];
-    $actual_end_date = $_POST['actual_end_date'] ?: NULL; 
+    $actual_end_date = $_POST['actual_end_date'] ?: NULL;
     $employee_id = $_POST['employee_id'];
     $priority_id = $_POST['priority_id'];
     $status_id = $_POST['status_id'];
@@ -47,16 +47,17 @@ if (isset($_POST['edit_requirement'])) {
     $stmt->bind_param("issssiiii", $project_id, $description, $start_date, $end_date, $actual_end_date, $employee_id, $priority_id, $status_id, $requirement_id);
 
     if ($stmt->execute()) {
-        echo "Requisito actualizado exitosamente";
+        echo json_encode(['status' => 'success', 'message' => 'Requisito actualizado exitosamente']);
     } else {
-        echo "Error: " . $stmt->error;
+        echo json_encode(['status' => 'error', 'message' => $stmt->error]);
     }
 
     $stmt->close();
+    exit;
 }
 
 // eliminar requisito
-if (isset($_POST['delete_requirement'])) {
+if (isset($_POST['action']) && $_POST['action'] == 'delete_requirement') {
     $requirement_id = $_POST['requirement_id'];
 
     $sql = "DELETE FROM requirements WHERE requirement_id=?";
@@ -65,60 +66,52 @@ if (isset($_POST['delete_requirement'])) {
     $stmt->bind_param("i", $requirement_id);
 
     if ($stmt->execute()) {
-        echo "Requisito eliminado exitosamente";
+        echo json_encode(['status' => 'success', 'message' => 'Requisito eliminado exitosamente']);
     } else {
-        echo "Error: " . $stmt->error;
+        echo json_encode(['status' => 'error', 'message' => $stmt->error]);
     }
 
     $stmt->close();
+    exit;
 }
 
 // Obtener datos para formularios y tablas
-// Obtener prioridades
 $priorities = [];
 $sql = "SELECT * FROM priority";
 $result = $conn->query($sql);
-
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $priorities[] = $row;
     }
 }
 
-// Obtener estados
 $statuses = [];
 $sql = "SELECT * FROM status";
 $result = $conn->query($sql);
-
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $statuses[] = $row;
     }
 }
 
-// Obtener empleados
 $employees = [];
 $sql = "SELECT * FROM employee";
 $result = $conn->query($sql);
-
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $employees[] = $row;
     }
 }
 
-// Obtener proyectos
 $projects = [];
 $sql = "SELECT * FROM project";
 $result = $conn->query($sql);
-
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $projects[] = $row;
     }
 }
 
-// Obtener requisitos
 $requirements = [];
 $sql = "SELECT r.*, p.name AS project_name, e.first_name AS employee_name, pr.description AS priority_desc, s.description AS status_desc
         FROM requirements r
@@ -127,7 +120,6 @@ $sql = "SELECT r.*, p.name AS project_name, e.first_name AS employee_name, pr.de
         JOIN priority pr ON r.priority_id = pr.priority_id
         JOIN status s ON r.status_id = s.status_id";
 $result = $conn->query($sql);
-
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $requirements[] = $row;
@@ -149,18 +141,14 @@ $conn->close();
             display: flex;
             justify-content: center;
         }
-        .table-container {
-            width: 48%; 
-            margin-left: 10px; 
-        }
-        .form-container, .table-container {
+        .table-container, .form-container {
             width: 48%;
         }
         .table-scroll {
-            max-height: 600px; 
-            overflow-y: auto; 
-            border: 1px solid #ddd; 
-            padding: 10px; 
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
         }
         table {
             width: 100%;
@@ -190,9 +178,8 @@ $conn->close();
 
     <div class="container">
         <div class="form-container">
-            <!-- Formulario para agregar requisitos -->
             <h2>Agregar Requisito</h2>
-            <form action="" method="POST">
+            <form id="requirementForm">
                 <label for="project_id">Proyecto:</label>
                 <select id="project_id" name="project_id" required>
                     <?php foreach ($projects as $p) { ?>
@@ -234,8 +221,8 @@ $conn->close();
                 </select><br><br>
 
                 <input type="hidden" id="requirement_id" name="requirement_id">
-                <button type="submit" name="add_requirement">Agregar Requisito</button>
-                <button type="submit" name="edit_requirement">Actualizar Requisito</button>
+                <button type="button" onclick="submitForm('add_requirement')">Agregar Requisito</button>
+                <button type="button" onclick="submitForm('edit_requirement')">Actualizar Requisito</button>
             </form>
         </div>
 
@@ -245,6 +232,7 @@ $conn->close();
                 <table>
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Proyecto</th>
                             <th>Descripción</th>
                             <th>Fecha de Inicio</th>
@@ -256,23 +244,21 @@ $conn->close();
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="requirementsTableBody">
                         <?php foreach ($requirements as $r) { ?>
                             <tr>
+                                <td><?php echo $r['requirement_id']; ?></td>
                                 <td><?php echo $r['project_name']; ?></td>
                                 <td><?php echo $r['description']; ?></td>
                                 <td><?php echo $r['start_date']; ?></td>
                                 <td><?php echo $r['end_date']; ?></td>
-                                <td><?php echo $r['actual_end_date'] ? $r['actual_end_date'] : 'N/A'; ?></td>
+                                <td><?php echo $r['actual_end_date']; ?></td>
                                 <td><?php echo $r['employee_name']; ?></td>
                                 <td><?php echo $r['priority_desc']; ?></td>
                                 <td><?php echo $r['status_desc']; ?></td>
                                 <td>
-                                    <button onclick="editRequirement(<?php echo $r['requirement_id']; ?>, '<?php echo $r['description']; ?>', '<?php echo $r['start_date']; ?>', '<?php echo $r['end_date']; ?>', '<?php echo $r['actual_end_date']; ?>', <?php echo $r['employee_id']; ?>, <?php echo $r['priority_id']; ?>, <?php echo $r['status_id']; ?>)">Editar</button>
-                                    <form action="" method="POST" style="display:inline;">
-                                        <input type="hidden" name="requirement_id" value="<?php echo $r['requirement_id']; ?>">
-                                        <button type="submit" name="delete_requirement">Eliminar</button>
-                                    </form>
+                                    <button onclick="editRequirement(<?php echo htmlspecialchars(json_encode($r)); ?>)">Editar</button>
+                                    <button onclick="deleteRequirement(<?php echo $r['requirement_id']; ?>)">Eliminar</button>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -283,15 +269,56 @@ $conn->close();
     </div>
 
     <script>
-        function editRequirement(id, description, startDate, endDate, actualEndDate, employeeId, priorityId, statusId) {
-            document.getElementById('requirement_id').value = id;
-            document.getElementById('description').value = description;
-            document.getElementById('start_date').value = startDate;
-            document.getElementById('end_date').value = endDate;
-            document.getElementById('actual_end_date').value = actualEndDate ? actualEndDate : '';
-            document.getElementById('employee_id').value = employeeId;
-            document.getElementById('priority_id').value = priorityId;
-            document.getElementById('status_id').value = statusId;
+        function submitForm(action) {
+            const form = document.getElementById('requirementForm');
+            const formData = new FormData(form);
+            formData.append('action', action);
+
+            fetch('requirements.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === 'success') {
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function editRequirement(requirement) {
+            document.getElementById('requirement_id').value = requirement.requirement_id;
+            document.getElementById('project_id').value = requirement.project_id;
+            document.getElementById('description').value = requirement.description;
+            document.getElementById('start_date').value = requirement.start_date;
+            document.getElementById('end_date').value = requirement.end_date;
+            document.getElementById('actual_end_date').value = requirement.actual_end_date;
+            document.getElementById('employee_id').value = requirement.employee_id;
+            document.getElementById('priority_id').value = requirement.priority_id;
+            document.getElementById('status_id').value = requirement.status_id;
+        }
+
+        function deleteRequirement(requirement_id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este requisito?')) {
+                const formData = new FormData();
+                formData.append('action', 'delete_requirement');
+                formData.append('requirement_id', requirement_id);
+
+                fetch('requirements.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.status === 'success') {
+                        window.location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
         }
     </script>
 </body>
