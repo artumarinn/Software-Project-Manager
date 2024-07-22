@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createAccount'])) {
             try {
                 $sql = "UPDATE employee SET password = '$password_hashed' WHERE dni = '$dni'";
                 if ($conn->query($sql) === TRUE) {
-                    $registerMessage = "Registration successful.";
+                    $registerMessage = "Registro exitoso";
                 } else {
                     throw new Exception($conn->error, $conn->errno);
                 }
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['createAccount'])) {
 </head>
 <body>
     <header>
-        <h1>Software Project Manager</h1>
+        <h1>Gestor de Proyectos de Software</h1>
         <nav>
         <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Auth/Login.php">Login</a>
         </nav>

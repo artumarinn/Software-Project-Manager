@@ -11,10 +11,10 @@ if (isset($_POST['add_project'])) {
     $actual_end_date = $_POST['actual_end_date'] ?: NULL;
     $customer_id = $_POST['customer_id'];
     $status_id = $_POST['status_id'];
-    $payment_id = $_POST['payment_id'];
+    $payment_id = $_POST['payment_id']?: NULL;
 
-    $sql = "INSERT INTO project (name, description, start_date, end_date, actual_end_date, customer_id, status_id, payment_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    // procedimiento almacenado
+    $sql = "CALL add_project(?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sssssiis", $name, $description, $start_date, $end_date, $actual_end_date, $customer_id, $status_id, $payment_id);
@@ -207,7 +207,7 @@ $conn->close();
                 </select><br><br>
 
                 <label for="payment_id">ID del Pago:</label>
-                <select id="payment_id" name="payment_id" required>
+                <select id="payment_id" name="payment_id">
                     <?php foreach ($payment as $p) { ?>
                         <option value="<?php echo $p['payment_id']; ?>"><?php echo $p['payment_id']; ?></option>
                     <?php } ?>

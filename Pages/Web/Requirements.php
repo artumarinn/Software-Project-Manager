@@ -1,7 +1,7 @@
 <?php
 include_once '../../Database/connection.php';
 
-// agregar requisito
+// agregar tarea
 if (isset($_POST['action']) && $_POST['action'] == 'add_requirement') {
     $project_id = $_POST['project_id'];
     $description = $_POST['description'];
@@ -19,7 +19,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'add_requirement') {
     $stmt->bind_param("issssiii", $project_id, $description, $start_date, $end_date, $actual_end_date, $employee_id, $priority_id, $status_id);
 
     if ($stmt->execute()) {
-        echo json_encode(['status' => 'success', 'message' => 'Requisito agregado exitosamente']);
+        echo json_encode(['status' => 'success', 'message' => 'Tarea agregado exitosamente']);
     } else {
         echo json_encode(['status' => 'error', 'message' => $stmt->error]);
     }
@@ -28,7 +28,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'add_requirement') {
     exit;
 }
 
-// editar requisito
+// editar tarea
 if (isset($_POST['action']) && $_POST['action'] == 'edit_requirement') {
     $requirement_id = $_POST['requirement_id'];
     $project_id = $_POST['project_id'];
@@ -47,7 +47,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_requirement') {
     $stmt->bind_param("issssiiii", $project_id, $description, $start_date, $end_date, $actual_end_date, $employee_id, $priority_id, $status_id, $requirement_id);
 
     if ($stmt->execute()) {
-        echo json_encode(['status' => 'success', 'message' => 'Requisito actualizado exitosamente']);
+        echo json_encode(['status' => 'success', 'message' => 'Tarea actualizado exitosamente']);
     } else {
         echo json_encode(['status' => 'error', 'message' => $stmt->error]);
     }
@@ -56,7 +56,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'edit_requirement') {
     exit;
 }
 
-// eliminar requisito
+// eliminar tarea
 if (isset($_POST['action']) && $_POST['action'] == 'delete_requirement') {
     $requirement_id = $_POST['requirement_id'];
 
@@ -66,7 +66,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete_requirement') {
     $stmt->bind_param("i", $requirement_id);
 
     if ($stmt->execute()) {
-        echo json_encode(['status' => 'success', 'message' => 'Requisito eliminado exitosamente']);
+        echo json_encode(['status' => 'success', 'message' => 'Tarea eliminado exitosamente']);
     } else {
         echo json_encode(['status' => 'error', 'message' => $stmt->error]);
     }
@@ -75,7 +75,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'delete_requirement') {
     exit;
 }
 
-// Obtener datos para formularios y tablas
+// obtener datos para formularios y tablas
 $priorities = [];
 $sql = "SELECT * FROM priority";
 $result = $conn->query($sql);
@@ -174,11 +174,11 @@ $conn->close();
             <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Payment.php">Pagos</a>
         </nav>
     </header>
-    <h1>Gestión de Requisitos</h1>
+    <h1>Gestión de tareas</h1>
 
     <div class="container">
         <div class="form-container">
-            <h2>Agregar Requisito</h2>
+            <h2>Agregar tarea</h2>
             <form id="requirementForm">
                 <label for="project_id">Proyecto:</label>
                 <select id="project_id" name="project_id" required>
@@ -227,7 +227,7 @@ $conn->close();
         </div>
 
         <div class="table-container">
-            <h2>Lista de Requisitos</h2>
+            <h2>Lista de Tareas</h2>
             <div class="table-scroll">
                 <table>
                     <thead>
