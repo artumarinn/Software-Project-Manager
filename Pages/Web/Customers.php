@@ -110,8 +110,8 @@ $conn->close();
             <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Projects.php">Projects</a>
             <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Requirements.php">Requirements</a>
             <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Employee.php">Employee</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Customers.php">Customers</a>
-            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Payment.php">Payment</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Customers.php">Customers</a>
+            <a href="http://localhost/UCH/BASE-DE-DATOS/Software-Project-Manager/Pages/Web/Payment.php">Payment</a>
         </nav>
     </header>
     <h1>Gestión de Clientes</h1>
@@ -124,7 +124,7 @@ $conn->close();
                 <label for="full_name">Nombre Completo:</label>
                 <input type="text" id="full_name" name="full_name" required><br><br>
 
-                <label for="cuil">CUIL:</label>
+                <label for="cuil">CUIL-CUIT:</label>
                 <input type="text" id="cuil" name="cuil" required><br><br>
 
                 <label for="address">Dirección:</label>
@@ -149,7 +149,7 @@ $conn->close();
                 <label for="edit_full_name">Nombre Completo:</label>
                 <input type="text" id="edit_full_name" name="full_name" required><br><br>
 
-                <label for="edit_cuil">CUIL:</label>
+                <label for="edit_cuil">CUIL-CUIT:</label>
                 <input type="text" id="edit_cuil" name="cuil" required><br><br>
 
                 <label for="edit_address">Dirección:</label>
@@ -181,7 +181,7 @@ $conn->close();
                     <tr>
                         <th>ID</th>
                         <th>Nombre Completo</th>
-                        <th>CUIL</th>
+                        <th>CUIL-CUIT</th>
                         <th>Dirección</th>
                         <th>Email</th>
                         <th>Teléfono</th>
@@ -204,7 +204,7 @@ $conn->close();
     </div>
 
     <script>
-        // Llenar formulario de edición con datos del cliente seleccionado
+        
         function editCustomer(customer_id, full_name, cuil, address, email, phone) {
             document.getElementById('customer_id').value = customer_id;
             document.getElementById('edit_full_name').value = full_name;
